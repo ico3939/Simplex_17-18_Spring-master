@@ -1,30 +1,22 @@
 #include "AppClass.h"
 void Application::InitVariables(void)
 {
-	//init the mesh
-	m_pMesh = new MyMesh();
-	m_pMesh->GenerateCube(1.0f, C_WHITE);
-	//m_pMesh->GenerateSphere(1.0f, 5, C_WHITE);
-
-	// initialize the mesh vector
-	meshContainer.resize(SPRITE_HEIGHT);
-	for (int i = 0; i < meshContainer.size(); i++) {
-		meshContainer[i].resize(SPRITE_LENGTH);
-	}
-
-	for (int i = 0; i < meshContainer.size(); i++) {
-		for (int j = 0; j < meshContainer[i].size(); j++) {
-
-		}
-	}
-
+	////init the mesh
+	//m_pMesh = new MyMesh();
+	//m_pMesh->GenerateCube(1.0f, C_WHITE);
+	//m_pMesh->GenerateSphere(1.0f, 5, C_WHITE)
+	
+	
 	for (int i = 0; i < CUBE_COUNT; i++) {
 		
-		//meshContatiner[i] = m_pMesh;
+		MyMesh* m_pMesh = nullptr;
+		m_pMesh = new MyMesh();
+		m_pMesh->GenerateCube(1.0f, C_BROWN);
+		
+		meshContainer.push_back(m_pMesh);
+
 	}
-	MyMesh* m_pMesh = nullptr;
-	m_pMesh = new MyMesh();
-	m_pMesh->GenerateCube(1.0f, C_BROWN);
+	
 }
 void Application::Update(void)
 {
@@ -44,16 +36,22 @@ void Application::Display(void)
 
 	matrix4 m4View = m_pCameraMngr->GetViewMatrix();
 	matrix4 m4Projection = m_pCameraMngr->GetProjectionMatrix();
-	
-	matrix4 m4Scale = glm::scale(IDENTITY_M4, vector3(2.0f,2.0f,2.0f));
-	static float value = 0.0f;
-	matrix4 m4Translate = glm::translate(IDENTITY_M4, vector3(value, 2.0f, 3.0f));
-	//value += 0.01f;
 
-	//matrix4 m4Model = m4Translate * m4Scale;
-	matrix4 m4Model = m4Scale * m4Translate;
+	for (int i = 0; i < CUBE_COUNT; i++) {
 
-	m_pMesh->Render(m4Projection, m4View, m4Model);
+		matrix4 m4Scale = glm::scale(IDENTITY_M4, vector3(2.0f, 2.0f, 2.0f));
+		static float xValue = 2.0f;
+		static float yValue = 3.0f;
+
+		matrix4 m4Translate = glm::translate(IDENTITY_M4, vector3(xValue, yValue, 3.0f));
+		//value += 0.01f;
+
+		//matrix4 m4Model = m4Translate * m4Scale;
+		matrix4 m4Model = m4Scale * m4Translate;
+
+		m_pMesh->Render(m4Projection, m4View, m4Model);
+	}
+
 	
 	// draw a skybox
 	m_pMeshMngr->AddSkyboxToRenderList();

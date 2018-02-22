@@ -563,16 +563,19 @@ void MyMesh::GenerateSphere(float a_fRadius, int a_nSubdivisions, vector3 a_v3Co
 				}
 			}
 
-
-			// builds the quad faces with the points
-			if (j < a_nSubdivisions) {
-				// builds quad side face
-				AddQuad(vec3ArrayVector[i][j], vec3ArrayVector[i - 1][j], vec3ArrayVector[i][j - 1], vec3ArrayVector[i - 1][j - 1]);
-			}
 			else {
-				// builds quad side face
-				AddQuad(vec3ArrayVector[i][0], vec3ArrayVector[i - 1][0], vec3ArrayVector[i][j-1], vec3ArrayVector[i - 1][j - 1]);
+				// builds the quad faces with the points
+				if (j < a_nSubdivisions) {
+					// builds quad side face
+					AddQuad(vec3ArrayVector[i][j], vec3ArrayVector[i - 1][j], vec3ArrayVector[i][j - 1], vec3ArrayVector[i - 1][j - 1]);
+				}
+				else {
+					// builds quad side face
+					AddQuad(vec3ArrayVector[i][0], vec3ArrayVector[i - 1][0], vec3ArrayVector[i][j - 1], vec3ArrayVector[i - 1][j - 1]);
+				}
 			}
+
+			
 		}
 	}
 

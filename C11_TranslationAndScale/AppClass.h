@@ -15,14 +15,12 @@ Date: 2017/05
 class Application
 {
 	const int CUBE_COUNT = 44;
-	const int SPRITE_HEIGHT = 8;
-	const int SPRITE_LENGTH = 11;
 
-	std::vector<std::vector<MyMesh*>> meshContainer;
+	std::vector<MyMesh*> meshContainer;
 
 	MyMesh* m_pMesh = nullptr;
 
-	String m_sProgrammer = "Alberto Bobadilla - labigm@rit.edu";
+	String m_sProgrammer = "Ian Oliver - ico3939@g.rit.edu";
 
 private:
 	static ImGuiObject gui; //GUI object
