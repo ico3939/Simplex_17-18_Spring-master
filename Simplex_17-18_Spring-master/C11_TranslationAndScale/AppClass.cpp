@@ -36,7 +36,7 @@ void Application::Display(void)
 			if (canRenderArray[i][j] == true) {
 				matrix4 m4Scale = glm::scale(IDENTITY_M4, vector3(3.0f, 3.0f, 3.0f));
 
-				matrix4 m4Translate = glm::translate(IDENTITY_M4, vector3(j + xValue, -(i + yValue), -30.0f));
+				matrix4 m4Translate = glm::translate(IDENTITY_M4, vector3(j + xValue, (-i + yValue), -30.0f));
 				xValue += 0.003f;
 
 				//matrix4 m4Model = m4Translate * m4Scale;
