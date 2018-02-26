@@ -32,6 +32,13 @@ void Application::Update(void)
 	{
 		quaternion q1;
 		quaternion q2 = glm::angleAxis(359.9f, vector3(0.0f, 0.0f, 1.0f));
+
+		// check to see if the quaterions are similar
+		float matching = glm::dot(q1, q2);
+		if (abs(matching - 1.0) < 0.001) {
+			return;
+		}
+		
 		float fPercentage = MapValue(fTimer, 0.0f, 5.0f, 0.0f, 1.0f);
 		quaternion qSLERP = glm::mix(q1, q2, fPercentage);
 		m_m4Steve = glm::toMat4(qSLERP);

@@ -19,7 +19,7 @@ class Application
 	matrix4 m_m4Steve; //Model to world matrix for Steve
 	quaternion m_qOrientation; //orientation for the Model in quaternions
 
-	String m_sProgrammer = "Alberto Bobadilla - labigm@rit.edu";
+	String m_sProgrammer = "Ian Oliver - ico3939@g.rit.edu";
 
 private:
 	static ImGuiObject gui; //GUI object
