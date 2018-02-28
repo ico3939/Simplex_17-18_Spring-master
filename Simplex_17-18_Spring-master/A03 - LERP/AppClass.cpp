@@ -43,6 +43,8 @@ void Application::InitVariables(void)
 			float currentDegree = degreesBetween * j;
 			vector3 stop(cos(currentDegree) * fSize, sin(currentDegree) * fSize, 0.0f);
 			orbitStops.push_back(stop);
+
+			
 		}
 		m_allStops.push_back(orbitStops); // add the stops of the current orbit to the main list
 
@@ -77,32 +79,39 @@ void Application::Display(void)
 		The following offset will orient the orbits as in the demo, start without it to make your life easier.
 	*/
 	//m4Offset = glm::rotate(IDENTITY_M4, 90.0f, AXIS_Z);
+	//calculate the current position and move the sphere around the current orbit
+	
 
+	
+	static uint route = 0; //current route
 	// draw a shapes
 	for (uint i = 0; i < m_uOrbits; ++i)
 	{
 		m_pMeshMngr->AddMeshToRenderList(m_shapeList[i], glm::rotate(m4Offset, 90.0f, AXIS_X));
 
-		vector3 v3CurrentPos;
-		
-
-		//calculate the current position and move the sphere around the current orbit
-		//Get a timer
-		static float fTimer = 0;	//store the new timer
-		static uint uClock = m_pSystem->GenClock(); //generate a new clock for that timer
-		fTimer += m_pSystem->GetDeltaTime(uClock); //get the delta time for that timer
 
 		vector3 v3Start; //start point
 		vector3 v3End; //end point
-		static uint route = 0; //current route
+		
+		vector3 v3CurrentPos;
+
 		v3Start = m_allStops[i][route];
 		v3End = m_allStops[i][(route + 1) % m_allStops[i].size()]; //end at route +1 (if overboard will restart from 0)
 
+		//Get a timer
+		static float fTimer = 0;	//store the new timer
 		//get the percentage
 		float fTimeBetweenStops = 1.0;//in seconds
+		static uint uClock = m_pSystem->GenClock(); //generate a new clock for that timer
+		fTimer += m_pSystem->GetDeltaTime(uClock); //get the delta time for that timer
 		//map the value to be between 0.0 and 1.0
-		float fPercentage = MapValue(fTimer, 0.0f, fTimeBetweenStops, 0.0f, 1.0f); 
+		float fPercentage = MapValue(fTimer, 0.0f, fTimeBetweenStops, 0.0f, 1.0f);
+
+
+
 		v3CurrentPos = glm::lerp(v3Start, v3End, fPercentage);
+		matrix4 m4Model = glm::translate(m4Offset, v3CurrentPos);
+
 
 		//if we are done with this route
 		if (fPercentage >= 1.0f)
@@ -110,10 +119,8 @@ void Application::Display(void)
 			route++; //go to the next route
 			fTimer = m_pSystem->GetDeltaTime(uClock);//restart the clock
 			route %= m_allStops[i].size();//make sure we are within boundries
+
 		}
-
-		matrix4 m4Model = glm::translate(m4Offset, v3CurrentPos);
-
 		//draw spheres
 		m_pMeshMngr->AddSphereToRenderList(m4Model * glm::scale(vector3(0.1)), C_WHITE);
 	}
