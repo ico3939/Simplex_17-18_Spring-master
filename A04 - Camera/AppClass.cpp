@@ -3,7 +3,7 @@ using namespace Simplex;
 void Application::InitVariables(void)
 {
 	//Change this to your name and email
-	m_sProgrammer = "Alberto Bobadilla - labigm@rit.edu";
+	m_sProgrammer = "Ian Oliver - ico3939@g.rit.edu";
 
 	//Set the position and target of the camera
 	//(I'm at [0,0,10], looking at [0,0,0] and up is the positive Y axis)
@@ -11,14 +11,15 @@ void Application::InitVariables(void)
 
 	//init the camera
 	m_pCamera = new MyCamera();
-	m_pCamera->SetPositionTargetAndUp(
+	m_pCamera->SetPositionTargetAndUpAndRightAndForward(
 			vector3(0.0f, 3.0f, 20.0f), //Where my eyes are
 			vector3(0.0f, 3.0f, 19.0f), //where what I'm looking at is
-			AXIS_Y);					//what is up
+			AXIS_Y, AXIS_X, AXIS_Z);	// the up, right, and forward axes
 
 	//Get the singleton
 	m_pMyMeshMngr = MyMeshManager::GetInstance();
 	m_pMyMeshMngr->SetCamera(m_pCamera);
+
 }
 void Application::Update(void)
 {

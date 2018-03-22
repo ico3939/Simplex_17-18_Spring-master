@@ -12,9 +12,18 @@ namespace Simplex
 
 class MyCamera
 {
+	// rotation variables
+	vector3 m_v3Rotation;
+	vector3 m_v3Center;
+	matrix4 m_m4RotationMatrix;
+
 	vector3 m_v3Position = vector3(0.0f, 0.0f, 10.0f); //Where my camera is located
 	vector3 m_v3Target = vector3(0.0f, 0.0f, 0.0f); //What I'm looking at
 	vector3 m_v3Up = vector3(0.0f, 1.0f, 0.0f); //What is up
+
+	vector3 m_v3Forward = vector3(0.0f, 0.0f, -1.0f); //View vector
+	vector3 m_v3Upward = vector3(0.0f, 1.0f, 0.0f); //where my head is pointing up
+	vector3 m_v3Rightward = vector3(0.0f, 1.0f, 0.0f); //What is to my right
 
 	bool m_bPerspective = true; //perspective view? False is Orthographic
 
@@ -44,7 +53,7 @@ public:
 	-	vector3 a_v3Upward -> What is up
 	OUTPUT: ---
 	*/
-	MyCamera(vector3 a_v3Position, vector3 a_v3Target, vector3 a_v3Upward);
+	MyCamera(vector3 a_v3Position, vector3 a_v3Target, vector3 a_v3Upward, vector3 a_v3Right, vector3 a_v3Forward);
 
 	/*
 	USAGE: Copy constructor
@@ -196,7 +205,54 @@ public:
 	-	vector3 a_v3Upward -> What is up
 	OUTPUT: ---
 	*/
-	void SetPositionTargetAndUp(vector3 a_v3Position, vector3 a_v3Target, vector3 a_v3Upward = AXIS_Y);
+	void SetPositionTargetAndUpAndRightAndForward(vector3 a_v3Position, vector3 a_v3Target, vector3 a_v3Upward = AXIS_Y, vector3 a_v3Forward = AXIS_Z, vector3 a_v3Right = AXIS_X);
+
+	/*
+	USAGE: Calculate the rotational value of the camera
+	ARGUMENTS:
+	-	float a_fAngleX -> The X component of the angle of rotation
+	-	float a_fAngleY -> The Y component of the angle of rotation
+	OUTPUT: ---
+	*/
+	void CalculateRotation(float a_fAngleX, float a_fAngleY);
+
+	/*
+	USAGE: Move the camera forward
+	ARGUMENTS:
+	-	float a_fSpeed -> The speed of the movement
+	OUTPUT: ---
+	*/
+	void MoveForward(float a_fSpeed);
+
+	/*
+	USAGE: Move the camera backward
+	ARGUMENTS:
+	-	float a_fSpeed -> The speed of the movement
+	OUTPUT: ---
+	*/
+	void MoveBackward(float a_fSpeed);
+
+	/*
+	USAGE: Move the camera left
+	ARGUMENTS:
+	-	float a_fSpeed -> The speed of the movement
+	OUTPUT: ---
+	*/
+	void MoveLeft(float a_fSpeed);
+
+	/*
+	USAGE: Move the camera right
+	ARGUMENTS:
+	-	float a_fSpeed -> The speed of the movement
+	OUTPUT: ---
+	*/
+	void MoveRight(float a_fSpeed);
+
+	/*
+	USAGE: Calculate what the camera should be looking at with the values of position target and up
+	ARGUMENTS: ---
+	OUTPUT: ---
+	*/
 
 	/*
 	USAGE: Calculate what the camera should be looking at with the values of position target and up

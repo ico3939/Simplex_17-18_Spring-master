@@ -24,15 +24,17 @@ matrix4 Simplex::MyCamera::GetProjectionMatrix(void) { return m_m4Projection; }
 
 matrix4 Simplex::MyCamera::GetViewMatrix(void) { CalculateViewMatrix(); return m_m4View; }
 
+vector3 Simplex::MyCamera::GetPosition(void) { return m_v3Position; }
+
 Simplex::MyCamera::MyCamera()
 {
 	Init(); //Init the object with default values
 }
 
-Simplex::MyCamera::MyCamera(vector3 a_v3Position, vector3 a_v3Target, vector3 a_v3Upward)
+Simplex::MyCamera::MyCamera(vector3 a_v3Position, vector3 a_v3Target, vector3 a_v3Upward, vector3 a_v3Right, vector3 a_v3Forward)
 {
 	Init(); //Initialize the object
-	SetPositionTargetAndUp(a_v3Position, a_v3Target, a_v3Upward); //set the position, target and up
+	SetPositionTargetAndUpAndRightAndForward(a_v3Position, a_v3Target, a_v3Upward, a_v3Right, a_v3Forward); //set the position, target and up and forward and right
 }
 
 Simplex::MyCamera::MyCamera(MyCamera const& other)
@@ -40,6 +42,8 @@ Simplex::MyCamera::MyCamera(MyCamera const& other)
 	m_v3Position = other.m_v3Position;
 	m_v3Target = other.m_v3Target;
 	m_v3Up = other.m_v3Up;
+	m_v3Rightward = other.m_v3Rightward;
+	m_v3Forward = other.m_v3Forward;
 
 	m_bPerspective = other.m_bPerspective;
 
@@ -60,7 +64,7 @@ MyCamera& Simplex::MyCamera::operator=(MyCamera const& other)
 	if (this != &other)
 	{
 		Release();
-		SetPositionTargetAndUp(other.m_v3Position, other.m_v3Target, other.m_v3Up);
+		SetPositionTargetAndUpAndRightAndForward(other.m_v3Position, other.m_v3Target, other.m_v3Upward, other.m_v3Rightward, other.m_v3Forward);
 		MyCamera temp(other);
 		Swap(temp);
 	}
@@ -110,6 +114,8 @@ void Simplex::MyCamera::ResetCamera(void)
 	m_v3Position = vector3(0.0f, 0.0f, 10.0f); //Where my camera is located
 	m_v3Target = vector3(0.0f, 0.0f, 0.0f); //What I'm looking at
 	m_v3Up = vector3(0.0f, 1.0f, 0.0f); //What is up
+	m_v3Rightward = vector3(1.0f, 0.0f, 0.0f);
+	m_v3Forward = vector3(0.0f, 0.0f, 1.0f);
 
 	m_bPerspective = true; //perspective view? False is Orthographic
 
@@ -125,18 +131,57 @@ void Simplex::MyCamera::ResetCamera(void)
 	CalculateViewMatrix();
 }
 
-void Simplex::MyCamera::SetPositionTargetAndUp(vector3 a_v3Position, vector3 a_v3Target, vector3 a_v3Upward)
+void Simplex::MyCamera::SetPositionTargetAndUpAndRightAndForward(vector3 a_v3Position, vector3 a_v3Target, vector3 a_v3Upward, vector3 a_v3Right, vector3 a_v3Forward)
 {
 	m_v3Position = a_v3Position;
 	m_v3Target = a_v3Target;
 	m_v3Up = a_v3Position + a_v3Upward;
+	m_v3Forward = a_v3Position + a_v3Forward;
+	m_v3Rightward = a_v3Position + a_v3Right;
 	CalculateProjectionMatrix();
+}
+
+void Simplex::MyCamera::CalculateRotation(float a_fAngleX, float a_fAngleY)
+{
+	m_v3Rotation.x += a_fAngleX;
+	m_v3Rotation.y += a_fAngleY;
+
+	glm::clamp(a_fAngleX, -.5f * (float)PI, .5f * (float)PI);
+}
+
+// Helper Methods for movement
+// ---------------------------
+
+void Simplex::MyCamera::MoveForward(float a_fSpeed) {
+
+	m_v3Position += glm::mat3(glm::yawPitchRoll(m_v3Rotation.y, m_v3Rotation.x, m_v3Rotation.z)) * vector3(0.0f, 0.0f, -1.0f) / a_fSpeed;
+}
+
+void Simplex::MyCamera::MoveBackward(float a_fSpeed) {
+
+	m_v3Position -= glm::mat3(glm::yawPitchRoll(m_v3Rotation.y, m_v3Rotation.x, m_v3Rotation.z)) * vector3(0.0f, 0.0f, -1.0f) / a_fSpeed;
+
+}
+
+void Simplex::MyCamera::MoveLeft(float a_fSpeed) {
+
+	m_v3Position -= glm::mat3(glm::yawPitchRoll(m_v3Rotation.y, m_v3Rotation.x, m_v3Rotation.z)) * vector3(1.0f, 0.0f, 0.0f) / a_fSpeed;
+
+}
+
+void Simplex::MyCamera::MoveRight(float a_fSpeed) {
+
+	m_v3Position += glm::mat3(glm::yawPitchRoll(m_v3Rotation.y, m_v3Rotation.x, m_v3Rotation.z)) * vector3(1.0f, 0.0f, 0.0f) / a_fSpeed;
+
 }
 
 void Simplex::MyCamera::CalculateViewMatrix(void)
 {
-	//Calculate the look at
-	m_m4View = glm::lookAt(m_v3Position, m_v3Target, m_v3Up);
+	//Calculate the center with the yawPitchRoll by the position of the camera
+	m_v3Center = m_v3Position + glm::mat3(glm::yawPitchRoll(m_v3Rotation.y, m_v3Rotation.x, m_v3Rotation.z)) * vector3(0.0f, 0.0f, -1.0f);
+
+	// Setting the view eqaul to the center and yawPitchRoll of the rotation matrix
+	m_m4View = glm::lookAt(m_v3Position, m_v3Center, glm::mat3(glm::yawPitchRoll(m_v3Rotation.y, m_v3Rotation.x, m_v3Rotation.z)) * vector3(0.0f, 1.0f, 0.0f));
 }
 
 void Simplex::MyCamera::CalculateProjectionMatrix(void)

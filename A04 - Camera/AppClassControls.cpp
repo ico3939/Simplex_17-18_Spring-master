@@ -122,6 +122,7 @@ void Application::ProcessKeyReleased(sf::Event a_event)
 			}
 		}
 		break;
+
 	}
 
 	//gui
@@ -369,6 +370,9 @@ void Application::CameraRotation(float a_fSpeed)
 		fAngleX += fDeltaMouse * a_fSpeed;
 	}
 	//Change the Yaw and the Pitch of the camera
+	
+	m_pCamera->CalculateRotation(fAngleX / 2.0f, fAngleY / 2.0f); // Rotate the camera by the axis and the angle
+
 	SetCursorPos(CenterX, CenterY);//Position the mouse in the center
 }
 //Keyboard
@@ -379,12 +383,34 @@ void Application::ProcessKeyboard(void)
 	for discreet on/off use ProcessKeyboardPressed/Released
 	*/
 #pragma region Camera Position
-	float fSpeed = 0.1f;
+	float fSpeed = 5.0f;
 	float fMultiplier = sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) ||
 		sf::Keyboard::isKeyPressed(sf::Keyboard::RShift);
 
+	bool bForward = sf::Keyboard::isKeyPressed(sf::Keyboard::W);
+	bool bBackward = sf::Keyboard::isKeyPressed(sf::Keyboard::S);
+	bool bLeft = sf::Keyboard::isKeyPressed(sf::Keyboard::A);
+	bool bRight = sf::Keyboard::isKeyPressed(sf::Keyboard::D);
+
 	if (fMultiplier)
 		fSpeed *= 5.0f;
+
+	// strafe camera forward, back, left, or right
+	//--------------------------------------------
+
+	if (bForward) { // move forward
+		m_pCamera->MoveForward(fSpeed);
+	}
+	if (bBackward) { // move backward
+		m_pCamera->MoveBackward(fSpeed);
+	}
+	if (bLeft) { // move left
+		m_pCamera->MoveLeft(fSpeed);
+	}
+	if (bRight) { // move right
+		m_pCamera->MoveRight(fSpeed);
+	}
+
 #pragma endregion
 }
 //Joystick
@@ -395,6 +421,7 @@ void Application::ProcessJoystick(void)
 	for discreet on/off use ProcessJoystickPressed/Released
 	*/
 #pragma region Camera Position
+	
 	float fForwardSpeed = m_pController[m_uActCont]->axis[SimplexAxis_Y] / 150.0f;
 	float fHorizontalSpeed = m_pController[m_uActCont]->axis[SimplexAxis_X] / 150.0f;
 	float fVerticalSpeed = m_pController[m_uActCont]->axis[SimplexAxis_R] / 150.0f -
@@ -409,6 +436,8 @@ void Application::ProcessJoystick(void)
 		fHorizontalSpeed *= 3.0f;
 		fVerticalSpeed *= 3.0f;
 	}
+
+	
 #pragma endregion
 #pragma region Camera Orientation
 	//Change the Yaw and the Pitch of the camera
