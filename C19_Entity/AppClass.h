@@ -12,6 +12,8 @@ Date: 2017/06
 
 #include "MyEntity.h"
 
+#include "MyEntityManager.h"
+
 namespace Simplex
 {
 	//Adding Application to the Simplex namespace
@@ -25,9 +27,11 @@ class Application
 
 	vector3 m_v3Creeper; //position of the creeper
 	quaternion m_qCreeper; //orientation for the creeper
+
+	MyEntityManager* m_pEntityManager = nullptr; //Entity Manager
 		
 private:
-	String m_sProgrammer = "Alberto Bobadilla - labigm@rit.edu"; //programmer
+	String m_sProgrammer = "Ian Oliver & Andrew Knowland - ico3939@g.rit.edu & ark4003@g.rit.edu"; //programmer
 
 	static ImGuiObject gui; //GUI object
 	bool m_bGUI_Main = true; //show Main GUI window?
