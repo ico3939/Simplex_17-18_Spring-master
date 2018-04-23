@@ -29,11 +29,23 @@ void Application::InitVariables(void)
 			m_pEntityMngr->SetModelMatrix(m4Position);
 		}
 	}
-	m_uOctantLevels = 1;
+
+	// Setting beginning Octree level
+	m_uOctantLevels = 2;
 	m_pEntityMngr->Update();
 }
 void Application::Update(void)
 {
+	// Statements that will turn the octree on and off
+	if (m_pRoot != nullptr) {
+		m_pEntityMngr->ClearDimensionSetAll();
+		SafeDelete(m_pRoot);
+	}
+	if (m_bOctOptimize) {
+		
+		m_pRoot = new Octree(m_uOctantLevels, 5);
+	}
+
 	//Update the system so it knows how much time has passed since the last call
 	m_pSystem->Update();
 
@@ -55,7 +67,10 @@ void Application::Display(void)
 	ClearScreen();
 
 	//display octree
-	//m_pRoot->Display();
+	if (m_bOctOptimize) {
+
+		m_pRoot->Display(m_uOctantID, C_GREEN);
+	}
 	
 	// draw a skybox
 	m_pMeshMngr->AddSkyboxToRenderList();

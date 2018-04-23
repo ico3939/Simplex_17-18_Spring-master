@@ -55,7 +55,17 @@ void Application::DrawGUI(void)
 			ImGui::Text("	  -: Increment Octree subdivision\n");
 			ImGui::Text("	  +: Decrement Octree subdivision\n");
 			ImGui::Separator();
+			ImGui::Text("	  Z: To turn Octree On and Off\n");
+			ImGui::Separator();
 			ImGui::TextColored(ImColor(255, 255, 0), "Octree\n");
+			if (m_bOctOptimize == true)
+			{
+				ImGui::Text("      Octree: On\n");
+			}
+			else
+			{
+				ImGui::Text("      Octree: Off\n");
+			}
 		}
 		ImGui::End();
 	}

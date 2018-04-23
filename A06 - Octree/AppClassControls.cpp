@@ -147,6 +147,9 @@ void Application::ProcessKeyReleased(sf::Event a_event)
 			*/
 		}
 		break;
+	case sf::Keyboard::Z:
+		m_bOctOptimize = !m_bOctOptimize;
+		break;
 	case sf::Keyboard::LShift:
 	case sf::Keyboard::RShift:
 		m_bModifier = false;
